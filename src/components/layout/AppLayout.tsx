@@ -1,14 +1,12 @@
-import { Outlet } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 
-export function AppLayout() {
+export function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="app-shell">
       <SiteHeader />
-      <main>
-        <Outlet />
-      </main>
+      <main>{children}</main>
       <SiteFooter />
     </div>
   );
