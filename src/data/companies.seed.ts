@@ -1,8 +1,8 @@
-import type { Company } from '../types/company';
+﻿import type { Company } from '../types/company';
 
 const baseDate = '2026-02-20T10:00:00.000Z';
 
-export const companiesSeed: Company[] = [
+const companiesBase: Company[] = [
   {
     id: 'cmp-aurora',
     name: 'Panaderia Fit Aurora',
@@ -348,7 +348,7 @@ export const companiesSeed: Company[] = [
     serviceType: 'B2C',
     summary: 'Ropa casual y corporativa para marcas, eventos y publico joven.',
     description:
-      'Moda Urbana 57 dise�a y comercializa prendas urbanas y uniformes personalizados. Ofrece colecciones por temporada y produccion por lote.',
+      'Moda Urbana 57 diseña y comercializa prendas urbanas y uniformes personalizados. Ofrece colecciones por temporada y produccion por lote.',
     services: ['Diseno textil', 'Uniformes personalizados', 'Venta retail'],
     brands: ['U57', 'StreetMotion'],
     logoUrl: 'https://picsum.photos/seed/logo-moda57/320/320',
@@ -508,3 +508,33 @@ export const companiesSeed: Company[] = [
     ],
   },
 ];
+const hashSeed = (value: string): number =>
+  Array.from(value).reduce((acc, char) => ((acc * 31 + char.charCodeAt(0)) >>> 0), 7);
+
+const aiImage = (prompt: string, width: number, height: number): string => {
+  const seed = hashSeed(prompt);
+  const enrichedPrompt = `${prompt}, clean commercial photography, realistic details, colombia market`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(enrichedPrompt)}?model=flux&seed=${seed}&width=${width}&height=${height}&nologo=true`;
+};
+
+const aiLogo = (companyName: string): string => {
+  const seed = hashSeed(companyName);
+  return `https://api.dicebear.com/9.x/shapes/png?seed=${seed}&backgroundColor=f5f7f6,ffffff,59c13c&size=320`;
+};
+
+export const companiesSeed: Company[] = companiesBase.map((company) => {
+  const firstService = company.services[0] ?? company.category;
+
+  return {
+    ...company,
+    logoUrl: aiLogo(company.name),
+    bannerUrl: aiImage(`${company.name} ${company.category} ${firstService}`, 1400, 480),
+    galleryUrls: [1, 2, 3].map((index) =>
+      aiImage(`${company.name} ${firstService} instalaciones empresariales foto ${index}`, 1000, 700),
+    ),
+    products: company.products.map((product) => ({
+      ...product,
+      imageUrl: aiImage(`${company.name} ${product.name} ${product.shortDesc}`, 800, 600),
+    })),
+  };
+});

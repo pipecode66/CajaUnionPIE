@@ -1,7 +1,7 @@
 import { companiesSeed } from '../data/companies.seed';
 import type { Company } from '../types/company';
 
-const STORAGE_KEY = 'cajaunion-pie-companies-v1';
+const STORAGE_KEY = 'cajaunion-pie-companies-v2';
 
 const isCompanyArray = (value: unknown): value is Company[] =>
   Array.isArray(value) && value.every((item) => typeof item === 'object' && item !== null && 'id' in item);

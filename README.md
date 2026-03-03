@@ -1,25 +1,21 @@
-# Caja Union PIE - Plataforma Digital de Conexion y Dinamizacion Comercial
+﻿# Caja Union PIE - Vitrina Empresarial
 
-MVP Frontend (React + Vite + TypeScript) para el **Programa de Integracion Empresarial** respaldado por Caja Union.
+Aplicacion React + Vite + TypeScript para visualizar empresas y su menu comercial en **una sola pagina**.
 
-## Caracteristicas
+## Enfoque actual
 
-- Landing institucional-comercial con branding Caja Union.
-- Directorio empresarial con busqueda, filtros, ordenamiento y paginacion.
-- Perfil de empresa con banner, servicios, marcas, galeria y mini catalogo.
-- Modal de detalle de producto + CTA de WhatsApp prellenado.
-- Registro/edicion de empresas con carga de imagenes validada (tipo/ext/tamano).
-- Persistencia local en `localStorage` + seed data.
-- Admin MVP con moderacion, edicion rapida e importacion masiva JSON/CSV.
-- Boton de generacion demo para escalar a 150 empresas.
+- Vista unica de empresas (sin panel admin, sin directorio separado, sin registro separado).
+- Selector lateral de empresas + detalle completo en el mismo flujo.
+- Menu de productos por empresa con modal de detalle y CTA de WhatsApp.
+- Imagenes de productos/banners generadas por IA a partir de nombre + descripcion para mantener coherencia visual.
+- Branding Caja Union con logo y favicon en `public/brand/`.
 
 ## Estructura principal
 
-- `src/data/companies.seed.ts`: dataset inicial.
-- `src/context/CompaniesContext.tsx`: estado global y operaciones CRUD/import.
-- `src/pages/`: Home, Directorio, Perfil, Registro, Admin.
-- `src/components/`: layout, componentes comunes y negocio.
-- `src/utils/`: validaciones, storage y utilidades.
+- `src/pages/CompaniesShowcasePage.tsx`: experiencia principal de visualizacion.
+- `src/data/companies.seed.ts`: seed de empresas y enriquecimiento de imagenes IA.
+- `src/context/CompaniesContext.tsx`: estado global y persistencia local.
+- `src/components/company/`: cards y modal de producto.
 
 ## Ejecutar local
 
@@ -37,6 +33,7 @@ npm run preview
 
 ## Notas
 
-- El estado se guarda en localStorage con clave `cajaunion-pie-companies-v1`.
-- Para reiniciar datos usa el boton **Restaurar seed inicial** en Admin.
-- Logo y favicon estan en `public/brand/`.
+- El estado local usa `localStorage` con la clave `cajaunion-pie-companies-v2`.
+- Logo y favicon activos:
+  - `public/brand/logo-cajaunion.png`
+  - `public/brand/favicon.png`
