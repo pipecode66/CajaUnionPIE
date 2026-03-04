@@ -32,28 +32,16 @@ const featuredSlots = [
     id: 'feature-aurora',
     companyId: 'cmp-aurora',
     title: 'Alimentos saludables para oficinas',
-    imageUrl:
-      'https://image.pollinations.ai/prompt/' +
-      encodeURIComponent('panaderia saludable empresarial productos frescos exhibicion comercial') +
-      '?model=flux&seed=3001&width=900&height=360&nologo=true',
   },
   {
     id: 'feature-tecno',
     companyId: 'cmp-tecnoplus',
     title: 'Tecnologia y accesorios con alta rotacion',
-    imageUrl:
-      'https://image.pollinations.ai/prompt/' +
-      encodeURIComponent('vitrina de accesorios tecnologicos smartphones cargadores audifonos tienda moderna') +
-      '?model=flux&seed=3002&width=900&height=360&nologo=true',
   },
   {
     id: 'feature-moda',
     companyId: 'cmp-moda57',
     title: 'Moda corporativa y urbana personalizada',
-    imageUrl:
-      'https://image.pollinations.ai/prompt/' +
-      encodeURIComponent('coleccion de ropa urbana y uniformes corporativos en showroom') +
-      '?model=flux&seed=3003&width=900&height=360&nologo=true',
   },
 ];
 
@@ -309,12 +297,12 @@ export function CompaniesShowcasePage() {
         <section className="featured-section" aria-label="Empresas destacadas">
           <div className="section-title-row">
             <h2>Empresas destacadas</h2>
-            <p>Estas imagenes redirigen directamente al detalle de la empresa enlazada.</p>
+            <p>Las destacadas usan automaticamente el mismo banner de cada empresa.</p>
           </div>
           <div className="featured-grid">
             {featuredCompanies.map((item) => (
               <button key={item.id} type="button" className="featured-card" onClick={() => openCompanyDetail(item.company.id)}>
-                <img src={item.imageUrl} alt={item.title} />
+                <img src={item.company.bannerUrl} alt={item.title} />
                 <div className="featured-overlay">
                   <strong>{item.company.name}</strong>
                   <span>{item.title}</span>
