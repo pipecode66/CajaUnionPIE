@@ -1,5 +1,5 @@
 import type { Company, Product } from '../../types/company';
-import { currencyCop, toWhatsappUrl } from '../../utils/company';
+import { toWhatsappUrl } from '../../utils/company';
 import { Modal } from '../common/Modal';
 
 interface ProductModalProps {
@@ -21,9 +21,6 @@ export function ProductModal({ company, product, onClose }: ProductModalProps) {
         <img src={product.imageUrl} alt={product.name} className="product-modal-image" />
         <div>
           <p>{product.shortDesc}</p>
-          <p>
-            <strong>{currencyCop(product.price)}</strong>
-          </p>
           {product.sku && <p className="muted-text">SKU: {product.sku}</p>}
           <div className="chip-row">
             {product.tags.map((tag) => (
