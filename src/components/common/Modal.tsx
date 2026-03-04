@@ -5,9 +5,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  cardClassName?: string;
 }
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, cardClassName }: ModalProps) {
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -29,7 +30,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label={title}>
-      <div className="modal-card">
+      <div className={`modal-card ${cardClassName ?? ''}`.trim()}>
         <header className="modal-header">
           <h3>{title}</h3>
           <button type="button" className="ghost-btn" onClick={onClose}>
