@@ -1,4 +1,5 @@
 ﻿import { useMemo, useState, type FormEventHandler } from 'react';
+import { Modal } from '../components/common/Modal';
 import { ProductCard } from '../components/company/ProductCard';
 import { ProductModal } from '../components/company/ProductModal';
 import { useCompanies } from '../context/CompaniesContext';
@@ -16,7 +17,6 @@ interface CompanyReview {
 
 type ReviewMap = Record<string, CompanyReview[]>;
 
-const PAGE_SIZE = 3;
 const REVIEWS_STORAGE_KEY = 'cajaunion-pie-company-reviews-v1';
 const DEFAULT_MAP_ADDRESS = 'Carrera 7 #32-16, Bogota';
 
@@ -129,8 +129,7 @@ export function CompaniesShowcasePage() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('Todas');
   const [city, setCity] = useState('Todas');
-  const [page, setPage] = useState(1);
-  const [selectedCompanyId, setSelectedCompanyId] = useState(publishedCompanies[0]?.id ?? '');
+  const [detailCompanyId, setDetailCompanyId] = useState<string | null>(null);
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [reviewsByCompany, setReviewsByCompany] = useState<ReviewMap>(() => loadReviews());
   const [reviewForm, setReviewForm] = useState({
@@ -163,23 +162,15 @@ export function CompaniesShowcasePage() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [publishedCompanies, query, category, city]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredCompanies.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const pagedCompanies = filteredCompanies.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const detailCompany = useMemo<Company | undefined>(
+    () => (detailCompanyId ? publishedCompanies.find((company) => company.id === detailCompanyId) : undefined),
+    [publishedCompanies, detailCompanyId],
+  );
 
-  const selectedCompany = useMemo<Company | undefined>(() => {
-    const selected = filteredCompanies.find((company) => company.id === selectedCompanyId);
-    if (selected) {
-      return selected;
-    }
-
-    return filteredCompanies[0] ?? publishedCompanies[0];
-  }, [filteredCompanies, selectedCompanyId, publishedCompanies]);
-
-  const selectedCompanyReviews = selectedCompany ? reviewsByCompany[selectedCompany.id] ?? [] : [];
+  const detailCompanyReviews = detailCompany ? reviewsByCompany[detailCompany.id] ?? [] : [];
   const averageRating =
-    selectedCompanyReviews.length > 0
-      ? selectedCompanyReviews.reduce((sum, review) => sum + review.rating, 0) / selectedCompanyReviews.length
+    detailCompanyReviews.length > 0
+      ? detailCompanyReviews.reduce((sum, review) => sum + review.rating, 0) / detailCompanyReviews.length
       : null;
 
   const featuredCompanies = featuredSlots
@@ -196,22 +187,22 @@ export function CompaniesShowcasePage() {
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  const selectCompany = (companyId: string, moveToDetails = false) => {
-    setSelectedCompanyId(companyId);
+  const openCompanyDetail = (companyId: string) => {
+    setDetailCompanyId(companyId);
     setActiveProduct(null);
+    setReviewForm({ author: '', rating: 5, comment: '' });
     setReviewError('');
+  };
 
-    if (moveToDetails) {
-      window.setTimeout(() => {
-        document.getElementById('detalle-empresa')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 0);
-    }
+  const closeCompanyDetail = () => {
+    setDetailCompanyId(null);
+    setActiveProduct(null);
   };
 
   const submitReview: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    if (!selectedCompany) {
+    if (!detailCompany) {
       return;
     }
 
@@ -231,7 +222,7 @@ export function CompaniesShowcasePage() {
 
     const newReview: CompanyReview = {
       id: `review-${crypto.randomUUID()}`,
-      companyId: selectedCompany.id,
+      companyId: detailCompany.id,
       author,
       rating,
       comment,
@@ -241,7 +232,7 @@ export function CompaniesShowcasePage() {
     setReviewsByCompany((current) => {
       const next = {
         ...current,
-        [selectedCompany.id]: [newReview, ...(current[selectedCompany.id] ?? [])],
+        [detailCompany.id]: [newReview, ...(current[detailCompany.id] ?? [])],
       };
       persistReviews(next);
       return next;
@@ -263,8 +254,8 @@ export function CompaniesShowcasePage() {
             <p className="eyebrow">Respaldado por Caja Union</p>
             <h1>Directorio Empresarial Integrado</h1>
             <p>
-              Explora empresas por categoria y ciudad. Cada card abre su detalle comercial con productos,
-              descripcion, servicios y botones directos de contacto.
+              Explora empresas por categoria y ciudad. Cada card abre un popup con su detalle comercial, contacto,
+              productos y valoraciones.
             </p>
           </div>
           <div className="showcase-stats">
@@ -285,23 +276,14 @@ export function CompaniesShowcasePage() {
             <input
               type="search"
               value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }}
+              onChange={(event) => setQuery(event.target.value)}
               placeholder="Ej: odontologia, panaderia, accesorios..."
             />
           </label>
 
           <label className="filter-field">
             Categoria
-            <select
-              value={category}
-              onChange={(event) => {
-                setCategory(event.target.value);
-                setPage(1);
-              }}
-            >
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
               {categories.map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -312,13 +294,7 @@ export function CompaniesShowcasePage() {
 
           <label className="filter-field">
             Ciudad
-            <select
-              value={city}
-              onChange={(event) => {
-                setCity(event.target.value);
-                setPage(1);
-              }}
-            >
+            <select value={city} onChange={(event) => setCity(event.target.value)}>
               {cities.map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -333,16 +309,11 @@ export function CompaniesShowcasePage() {
         <section className="featured-section" aria-label="Empresas destacadas">
           <div className="section-title-row">
             <h2>Empresas destacadas</h2>
-            <p>Agrega o reemplaza estas imagenes destacadas en `featuredSlots` para linkearlas a otra empresa.</p>
+            <p>Estas imagenes redirigen directamente al detalle de la empresa enlazada.</p>
           </div>
           <div className="featured-grid">
             {featuredCompanies.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="featured-card"
-                onClick={() => selectCompany(item.company.id, true)}
-              >
+              <button key={item.id} type="button" className="featured-card" onClick={() => openCompanyDetail(item.company.id)}>
                 <img src={item.imageUrl} alt={item.title} />
                 <div className="featured-overlay">
                   <strong>{item.company.name}</strong>
@@ -356,10 +327,10 @@ export function CompaniesShowcasePage() {
         <section className="directory-section" aria-label="Listado de empresas">
           <div className="section-title-row">
             <h2>Empresas</h2>
-            <p>Tarjetas clickeables, mostradas en bloques de 3 por pagina.</p>
+            <p>Se muestran todas las empresas filtradas en formato cards clickeables.</p>
           </div>
 
-          {pagedCompanies.length === 0 && (
+          {filteredCompanies.length === 0 && (
             <article className="list-empty">
               <h3>Sin resultados</h3>
               <p>Prueba otros filtros para volver a cargar empresas en el directorio.</p>
@@ -367,231 +338,206 @@ export function CompaniesShowcasePage() {
           )}
 
           <div className="directory-grid">
-            {pagedCompanies.map((company) => {
-              const isActive = selectedCompany?.id === company.id;
-
-              return (
-                <button
-                  type="button"
-                  key={company.id}
-                  className={`directory-card ${isActive ? 'active' : ''}`}
-                  onClick={() => selectCompany(company.id, true)}
-                >
-                  <img src={company.bannerUrl} alt={`Banner ${company.name}`} className="directory-card-banner" />
-                  <div className="directory-card-body">
-                    <div className="directory-card-head">
-                      <img src={company.logoUrl} alt={`${company.name} logo`} className="directory-card-logo" />
-                      <div>
-                        <h3>{company.name}</h3>
-                        <p>
-                          {company.category} - {company.city}
-                        </p>
-                      </div>
-                    </div>
-                    <p>{company.summary}</p>
-                    <div className="chip-row">
-                      {company.services.slice(0, 2).map((service) => (
-                        <span className="chip" key={`${company.id}-${service}`}>
-                          {service}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <nav className="directory-pagination" aria-label="Paginacion empresas">
-            <button type="button" onClick={() => setPage(safePage - 1)} disabled={safePage <= 1}>
-              Anterior
-            </button>
-            <span>
-              Pagina {safePage} de {totalPages}
-            </span>
-            <button type="button" onClick={() => setPage(safePage + 1)} disabled={safePage >= totalPages}>
-              Siguiente
-            </button>
-          </nav>
-        </section>
-
-        <section id="detalle-empresa" className="company-detail-panel" aria-label="Detalle de empresa">
-          {!selectedCompany && (
-            <article className="list-empty">
-              <h3>No hay empresa seleccionada</h3>
-            </article>
-          )}
-
-          {selectedCompany && (
-            <>
-              <header className="detail-header">
-                <img src={selectedCompany.bannerUrl} alt={`Banner ${selectedCompany.name}`} className="detail-banner" />
-                <div className="detail-main">
-                  <img src={selectedCompany.logoUrl} alt={`${selectedCompany.name} logo`} className="detail-logo" />
-                  <div>
-                    <h2>{selectedCompany.name}</h2>
-                    <p>{selectedCompany.description}</p>
-                    <p className="detail-summary">Servicio general: {selectedCompany.summary}</p>
-                    <div className="chip-row">
-                      {selectedCompany.services.map((service) => (
-                        <span className="chip" key={service}>
-                          {service}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="detail-actions">
-                  {selectedCompany.whatsapp && (
-                    <a
-                      href={toWhatsappUrl(selectedCompany.whatsapp, `Hola, deseo informacion sobre ${selectedCompany.name}.`)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="primary-link"
-                    >
-                      WhatsApp
-                    </a>
-                  )}
-
-                  <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(selectedCompany.address ?? DEFAULT_MAP_ADDRESS)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="secondary-link"
-                  >
-                    Google Maps
-                  </a>
-
-                  {selectedCompany.phone && (
-                    <a href={`tel:${selectedCompany.phone.replace(/\s/g, '')}`} className="secondary-link">
-                      Llamar
-                    </a>
-                  )}
-
-                  {selectedCompany.website && (
-                    <a href={selectedCompany.website} target="_blank" rel="noreferrer" className="secondary-link">
-                      Sitio web
-                    </a>
-                  )}
-                </div>
-              </header>
-
-              <section className="map-section">
-                <h3>Ubicacion</h3>
-                <p>{selectedCompany.address ?? DEFAULT_MAP_ADDRESS}</p>
-                <iframe
-                  className="map-frame"
-                  title={`Mapa ${selectedCompany.name}`}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(selectedCompany.address ?? DEFAULT_MAP_ADDRESS)}&output=embed`}
-                />
-              </section>
-
-              <section className="menu-section">
-                <div className="section-title-row">
-                  <h3>Productos y servicios que ofrece</h3>
-                  <p>Visualiza una muestra del portafolio sin mostrar precios.</p>
-                </div>
-                <div className="products-grid">
-                  {selectedCompany.products.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      companyName={selectedCompany.name}
-                      companyWhatsapp={selectedCompany.whatsapp}
-                      onView={setActiveProduct}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              <section className="reviews-section">
-                <div className="section-title-row">
-                  <h3>Comentarios y valoraciones</h3>
-                  <p>
-                    {averageRating
-                      ? `${averageRating.toFixed(1)} / 5 (${selectedCompanyReviews.length} valoraciones)`
-                      : 'Aun no hay valoraciones para esta empresa.'}
-                  </p>
-                </div>
-
-                <form className="review-form" onSubmit={submitReview}>
-                  <label>
-                    Nombre
-                    <input
-                      type="text"
-                      value={reviewForm.author}
-                      onChange={(event) => setReviewForm((current) => ({ ...current, author: event.target.value }))}
-                      placeholder="Tu nombre"
-                    />
-                  </label>
-
-                  <label>
-                    Valoracion
-                    <select
-                      value={reviewForm.rating}
-                      onChange={(event) =>
-                        setReviewForm((current) => ({
-                          ...current,
-                          rating: clampRating(Number(event.target.value)),
-                        }))
-                      }
-                    >
-                      <option value={5}>5 - Excelente</option>
-                      <option value={4}>4 - Muy buena</option>
-                      <option value={3}>3 - Buena</option>
-                      <option value={2}>2 - Regular</option>
-                      <option value={1}>1 - Baja</option>
-                    </select>
-                  </label>
-
-                  <label className="review-form-comment">
-                    Comentario
-                    <textarea
-                      rows={3}
-                      value={reviewForm.comment}
-                      onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
-                      placeholder="Comparte tu experiencia con esta empresa"
-                    />
-                  </label>
-
-                  {reviewError && (
-                    <p className="review-error" role="alert" aria-live="polite">
-                      {reviewError}
-                    </p>
-                  )}
-
-                  <button type="submit" className="primary-link">
-                    Enviar comentario
-                  </button>
-                </form>
-
-                <div className="reviews-list">
-                  {selectedCompanyReviews.length === 0 && <p className="muted-text">Todavia no hay comentarios registrados.</p>}
-
-                  {selectedCompanyReviews.map((review) => (
-                    <article key={review.id} className="review-card">
-                      <div className="review-head">
-                        <strong>{review.author}</strong>
-                        <span>{formatReviewDate(review.createdAt)}</span>
-                      </div>
-                      <p className="review-stars" aria-label={`Valoracion ${review.rating} de 5`}>
-                        {toStars(review.rating)}
+            {filteredCompanies.map((company) => (
+              <article key={company.id} className="directory-card">
+                <img src={company.bannerUrl} alt={`Banner ${company.name}`} className="directory-card-banner" />
+                <div className="directory-card-body">
+                  <div className="directory-card-head">
+                    <img src={company.logoUrl} alt={`${company.name} logo`} className="directory-card-logo" />
+                    <div>
+                      <h3>{company.name}</h3>
+                      <p>
+                        {company.category} - {company.city}
                       </p>
-                      <p>{review.comment}</p>
-                    </article>
-                  ))}
+                    </div>
+                  </div>
+                  <p>{company.summary}</p>
+                  <div className="chip-row">
+                    {company.services.slice(0, 2).map((service) => (
+                      <span className="chip" key={`${company.id}-${service}`}>
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                  <button type="button" className="primary-link directory-card-action" onClick={() => openCompanyDetail(company.id)}>
+                    Ver detalle
+                  </button>
                 </div>
-              </section>
-            </>
-          )}
+              </article>
+            ))}
+          </div>
         </section>
       </div>
 
-      {selectedCompany && <ProductModal company={selectedCompany} product={activeProduct} onClose={() => setActiveProduct(null)} />}
+      {detailCompany && (
+        <Modal isOpen={Boolean(detailCompany)} onClose={closeCompanyDetail} title={detailCompany.name} cardClassName="company-modal-card">
+          <section className="company-modal-content">
+            <header className="detail-header">
+              <img src={detailCompany.bannerUrl} alt={`Banner ${detailCompany.name}`} className="detail-banner" />
+              <div className="detail-main">
+                <img src={detailCompany.logoUrl} alt={`${detailCompany.name} logo`} className="detail-logo" />
+                <div>
+                  <h2>{detailCompany.name}</h2>
+                  <p>{detailCompany.description}</p>
+                  <p className="detail-summary">Servicio general: {detailCompany.summary}</p>
+                  <div className="chip-row">
+                    {detailCompany.services.map((service) => (
+                      <span className="chip" key={service}>
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-actions">
+                {detailCompany.whatsapp && (
+                  <a
+                    href={toWhatsappUrl(detailCompany.whatsapp, `Hola, deseo informacion sobre ${detailCompany.name}.`)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="primary-link"
+                  >
+                    WhatsApp
+                  </a>
+                )}
+
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(detailCompany.address ?? DEFAULT_MAP_ADDRESS)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="secondary-link"
+                >
+                  Google Maps
+                </a>
+
+                {detailCompany.phone && (
+                  <a href={`tel:${detailCompany.phone.replace(/\s/g, '')}`} className="secondary-link">
+                    Llamar
+                  </a>
+                )}
+
+                {detailCompany.website && (
+                  <a href={detailCompany.website} target="_blank" rel="noreferrer" className="secondary-link">
+                    Sitio web
+                  </a>
+                )}
+              </div>
+            </header>
+
+            <section className="map-section">
+              <h3>Ubicacion</h3>
+              <p>{detailCompany.address ?? DEFAULT_MAP_ADDRESS}</p>
+              <iframe
+                className="map-frame"
+                title={`Mapa ${detailCompany.name}`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(detailCompany.address ?? DEFAULT_MAP_ADDRESS)}&output=embed`}
+              />
+            </section>
+
+            <section className="menu-section">
+              <div className="section-title-row">
+                <h3>Productos y servicios que ofrece</h3>
+                <p>Visualiza una muestra del portafolio sin mostrar precios.</p>
+              </div>
+              <div className="products-grid">
+                {detailCompany.products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    companyName={detailCompany.name}
+                    companyWhatsapp={detailCompany.whatsapp}
+                    onView={setActiveProduct}
+                  />
+                ))}
+              </div>
+            </section>
+
+            <section className="reviews-section">
+              <div className="section-title-row">
+                <h3>Comentarios y valoraciones</h3>
+                <p>
+                  {averageRating
+                    ? `${averageRating.toFixed(1)} / 5 (${detailCompanyReviews.length} valoraciones)`
+                    : 'Aun no hay valoraciones para esta empresa.'}
+                </p>
+              </div>
+
+              <form className="review-form" onSubmit={submitReview}>
+                <label>
+                  Nombre
+                  <input
+                    type="text"
+                    value={reviewForm.author}
+                    onChange={(event) => setReviewForm((current) => ({ ...current, author: event.target.value }))}
+                    placeholder="Tu nombre"
+                  />
+                </label>
+
+                <label>
+                  Valoracion
+                  <select
+                    value={reviewForm.rating}
+                    onChange={(event) =>
+                      setReviewForm((current) => ({
+                        ...current,
+                        rating: clampRating(Number(event.target.value)),
+                      }))
+                    }
+                  >
+                    <option value={5}>5 - Excelente</option>
+                    <option value={4}>4 - Muy buena</option>
+                    <option value={3}>3 - Buena</option>
+                    <option value={2}>2 - Regular</option>
+                    <option value={1}>1 - Baja</option>
+                  </select>
+                </label>
+
+                <label className="review-form-comment">
+                  Comentario
+                  <textarea
+                    rows={3}
+                    value={reviewForm.comment}
+                    onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
+                    placeholder="Comparte tu experiencia con esta empresa"
+                  />
+                </label>
+
+                {reviewError && (
+                  <p className="review-error" role="alert" aria-live="polite">
+                    {reviewError}
+                  </p>
+                )}
+
+                <button type="submit" className="primary-link">
+                  Enviar comentario
+                </button>
+              </form>
+
+              <div className="reviews-list">
+                {detailCompanyReviews.length === 0 && <p className="muted-text">Todavia no hay comentarios registrados.</p>}
+
+                {detailCompanyReviews.map((review) => (
+                  <article key={review.id} className="review-card">
+                    <div className="review-head">
+                      <strong>{review.author}</strong>
+                      <span>{formatReviewDate(review.createdAt)}</span>
+                    </div>
+                    <p className="review-stars" aria-label={`Valoracion ${review.rating} de 5`}>
+                      {toStars(review.rating)}
+                    </p>
+                    <p>{review.comment}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </section>
+        </Modal>
+      )}
+
+      {detailCompany && <ProductModal company={detailCompany} product={activeProduct} onClose={() => setActiveProduct(null)} />}
     </section>
   );
 }
-

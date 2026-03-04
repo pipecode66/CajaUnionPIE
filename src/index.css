@@ -322,7 +322,6 @@ main {
   padding: 0;
   background: #fff;
   overflow: hidden;
-  cursor: pointer;
   text-align: left;
   transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
@@ -330,11 +329,6 @@ main {
 .directory-card:hover {
   transform: translateY(-1px);
   border-color: rgb(0 114 48 / 40%);
-}
-
-.directory-card.active {
-  border-color: var(--green-brand);
-  box-shadow: 0 0 0 2px rgb(0 114 48 / 18%);
 }
 
 .directory-card-banner {
@@ -378,31 +372,8 @@ main {
   font-size: 0.9rem;
 }
 
-.directory-pagination {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-}
-
-.directory-pagination button {
-  border: 1px solid var(--border);
-  background: #fff;
-  min-height: 2.2rem;
-  border-radius: 999px;
-  padding: 0.35rem 0.85rem;
-  font-weight: 700;
-}
-
-.directory-pagination button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.directory-pagination span {
-  font-weight: 600;
-  font-size: 0.88rem;
+.directory-card-action {
+  width: fit-content;
 }
 
 .list-empty {
@@ -677,6 +648,10 @@ main {
   box-shadow: 0 20px 40px rgb(11 27 18 / 26%);
 }
 
+.company-modal-card {
+  width: min(1120px, 100%);
+}
+
 .modal-header {
   position: sticky;
   top: 0;
@@ -691,6 +666,11 @@ main {
 
 .modal-body {
   padding: 1rem;
+}
+
+.company-modal-content {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .product-modal-content {
