@@ -1,5 +1,5 @@
 import type { Product } from '../../types/company';
-import { currencyCop, toWhatsappUrl } from '../../utils/company';
+import { toWhatsappUrl } from '../../utils/company';
 
 interface ProductCardProps {
   product: Product;
@@ -17,7 +17,13 @@ export function ProductCard({ product, companyName, companyWhatsapp, onView }: P
       <div className="product-body">
         <h4>{product.name}</h4>
         <p>{product.shortDesc}</p>
-        <strong>{currencyCop(product.price)}</strong>
+        <div className="chip-row">
+          {product.tags.map((tag) => (
+            <span key={tag} className="chip">
+              {tag}
+            </span>
+          ))}
+        </div>
         <div className="product-actions">
           <button type="button" className="secondary-btn" onClick={() => onView(product)}>
             Ver detalle
