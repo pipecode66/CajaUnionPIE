@@ -31,8 +31,9 @@ export const companiesSeed: Company[] = [
     address: 'Cl. 3 #0E-21, Barrio La ceiba, Cucuta, Norte de Santander',
     locations: [
       {
-        label: 'Sede principal',
+        label: 'SANDELI',
         address: 'Cl. 3 #0E-21, Barrio La ceiba, Cucuta, Norte de Santander',
+        mapsUrl: 'https://maps.app.goo.gl/ht3U9t5fvf98B3KM9',
       },
     ],
     website: 'https://example.com/sandeli',
@@ -111,8 +112,9 @@ export const companiesSeed: Company[] = [
     address: 'Av. 5 #15 - 27, La Cabrera, Cucuta, Norte de Santander',
     locations: [
       {
-        label: 'Campus principal',
+        label: 'FESC',
         address: 'Av. 5 #15 - 27, La Cabrera, Cucuta, Norte de Santander',
+        mapsUrl: 'https://maps.app.goo.gl/xZ35q8as7M3xyzLU9',
       },
     ],
     website: 'https://example.com/fesc',
@@ -191,8 +193,9 @@ export const companiesSeed: Company[] = [
     address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
     locations: [
       {
-        label: 'Oficina principal',
+        label: 'ZIVRA',
         address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
+        mapsUrl: 'https://maps.app.goo.gl/QSD1zSaTLQs2q2iB9',
       },
     ],
     website: 'https://example.com/zivra',
@@ -268,15 +271,17 @@ export const companiesSeed: Company[] = [
     galleryUrls: buildGallery('ROYAL FILMS', 'salas de cine y lobby cinematografico', 4400),
     whatsapp: '+573001110404',
     phone: '+5756040404',
-    address: 'Av. 4 #12b Norte 81 12N, Cucuta, Norte de Santander',
+    address: 'Av. 4 #12b Norte 81 12N, Urbanizacion Prados del Nte., Cucuta, Norte de Santander',
     locations: [
       {
         label: 'Unicentro',
-        address: 'Av. 4 #12b Norte 81 12N, Cucuta, Norte de Santander',
+        address: 'Av. 4 #12b Norte 81 12N, Urbanizacion Prados del Nte., Cucuta, Norte de Santander',
+        mapsUrl: 'https://maps.app.goo.gl/BxpQ11cXchqsrtHp8',
       },
       {
         label: 'Jardin Plaza',
         address: 'Anillo Vial Oriental #13-70 Of. De Administracion, Cucuta, Norte de Santander',
+        mapsUrl: 'https://maps.app.goo.gl/PV42zNkddikVAePt9',
       },
     ],
     website: 'https://example.com/royal-films',
@@ -355,8 +360,9 @@ export const companiesSeed: Company[] = [
     address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
     locations: [
       {
-        label: 'Oficina principal',
+        label: 'INTERMEDIOS',
         address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
+        mapsUrl: 'https://maps.app.goo.gl/QSD1zSaTLQs2q2iB9',
       },
     ],
     website: 'https://example.com/intermedios',

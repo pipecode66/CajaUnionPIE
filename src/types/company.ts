@@ -13,6 +13,7 @@ export interface Product {
 export interface CompanyLocation {
   label: string;
   address: string;
+  mapsUrl?: string;
 }
 
 export interface Company {

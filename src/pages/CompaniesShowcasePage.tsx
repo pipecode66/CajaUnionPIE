@@ -404,12 +404,12 @@ export function CompaniesShowcasePage() {
                 {detailLocations.map((location) => (
                   <a
                     key={`${detailCompany.id}-${location.label}`}
-                    href={`https://maps.google.com/?q=${encodeURIComponent(location.address)}`}
+                    href={location.mapsUrl ?? `https://maps.google.com/?q=${encodeURIComponent(location.address)}`}
                     target="_blank"
                     rel="noreferrer"
                     className="secondary-link"
                   >
-                    {detailLocations.length > 1 ? `Maps ${location.label}` : 'Google Maps'}
+                    {detailLocations.length > 1 ? `Maps ${location.label}` : location.label}
                   </a>
                 ))}
 
