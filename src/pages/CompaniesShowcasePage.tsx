@@ -29,19 +29,19 @@ const programBannerUrl =
 
 const featuredSlots = [
   {
-    id: 'feature-aurora',
-    companyId: 'cmp-aurora',
-    title: 'Alimentos saludables para oficinas',
+    id: 'feature-sandeli',
+    companyId: 'cmp-sandeli',
+    title: 'Alimentacion saludable y reposteria funcional',
   },
   {
-    id: 'feature-tecno',
-    companyId: 'cmp-tecnoplus',
-    title: 'Tecnologia y accesorios con alta rotacion',
+    id: 'feature-fesc',
+    companyId: 'cmp-fesc',
+    title: 'Oferta academica y formacion superior',
   },
   {
-    id: 'feature-moda',
-    companyId: 'cmp-moda57',
-    title: 'Moda corporativa y urbana personalizada',
+    id: 'feature-zivra',
+    companyId: 'cmp-zivra',
+    title: 'Marketing digital, branding y desarrollo web',
   },
 ];
 
