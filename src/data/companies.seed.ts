@@ -28,7 +28,13 @@ export const companiesSeed: Company[] = [
     galleryUrls: buildGallery('SANDELI', 'reposteria saludable y platos fit', 4010),
     whatsapp: '+573001110101',
     phone: '+5776010101',
-    address: 'Avenida Libertadores #15-48, Cucuta',
+    address: 'Cl. 3 #0E-21, Barrio La ceiba, Cucuta, Norte de Santander',
+    locations: [
+      {
+        label: 'Sede principal',
+        address: 'Cl. 3 #0E-21, Barrio La ceiba, Cucuta, Norte de Santander',
+      },
+    ],
     website: 'https://example.com/sandeli',
     schedule: 'Lunes a Sabado 7:00 a.m. - 7:00 p.m.',
     status: 'published',
@@ -102,7 +108,13 @@ export const companiesSeed: Company[] = [
     galleryUrls: buildGallery('FESC', 'campus universitario y aulas modernas', 4200),
     whatsapp: '+573001110202',
     phone: '+5776020202',
-    address: 'Avenida 4 #15N-122, Cucuta',
+    address: 'Av. 5 #15 - 27, La Cabrera, Cucuta, Norte de Santander',
+    locations: [
+      {
+        label: 'Campus principal',
+        address: 'Av. 5 #15 - 27, La Cabrera, Cucuta, Norte de Santander',
+      },
+    ],
     website: 'https://example.com/fesc',
     schedule: 'Lunes a Viernes 8:00 a.m. - 6:00 p.m.',
     status: 'published',
@@ -176,7 +188,13 @@ export const companiesSeed: Company[] = [
     galleryUrls: buildGallery('ZIVRA', 'agencia digital y equipo de desarrollo', 4300),
     whatsapp: '+573001110303',
     phone: '+5776030303',
-    address: 'Calle 10 #2E-35, Cucuta',
+    address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
+    locations: [
+      {
+        label: 'Oficina principal',
+        address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
+      },
+    ],
     website: 'https://example.com/zivra',
     schedule: 'Lunes a Viernes 8:30 a.m. - 6:30 p.m.',
     status: 'published',
@@ -250,7 +268,17 @@ export const companiesSeed: Company[] = [
     galleryUrls: buildGallery('ROYAL FILMS', 'salas de cine y lobby cinematografico', 4400),
     whatsapp: '+573001110404',
     phone: '+5756040404',
-    address: 'Carrera 51B #87-50, Barranquilla',
+    address: 'Av. 4 #12b Norte 81 12N, Cucuta, Norte de Santander',
+    locations: [
+      {
+        label: 'Unicentro',
+        address: 'Av. 4 #12b Norte 81 12N, Cucuta, Norte de Santander',
+      },
+      {
+        label: 'Jardin Plaza',
+        address: 'Anillo Vial Oriental #13-70 Of. De Administracion, Cucuta, Norte de Santander',
+      },
+    ],
     website: 'https://example.com/royal-films',
     schedule: 'Todos los dias 1:00 p.m. - 11:00 p.m.',
     status: 'published',
@@ -324,7 +352,13 @@ export const companiesSeed: Company[] = [
     galleryUrls: buildGallery('INTERMEDIOS', 'publicidad exterior y produccion grafica', 4500),
     whatsapp: '+573001110505',
     phone: '+5776050505',
-    address: 'Avenida 0 #12-38, Cucuta',
+    address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
+    locations: [
+      {
+        label: 'Oficina principal',
+        address: 'Av. 1 Este #3-48, Barrio La ceiba, Cucuta, Norte de Santander',
+      },
+    ],
     website: 'https://example.com/intermedios',
     schedule: 'Lunes a Viernes 8:00 a.m. - 6:00 p.m.',
     status: 'published',

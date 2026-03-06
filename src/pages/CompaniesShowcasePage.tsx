@@ -160,6 +160,17 @@ export function CompaniesShowcasePage() {
     detailCompanyReviews.length > 0
       ? detailCompanyReviews.reduce((sum, review) => sum + review.rating, 0) / detailCompanyReviews.length
       : null;
+  const detailLocations =
+    detailCompany?.locations && detailCompany.locations.length > 0
+      ? detailCompany.locations
+      : detailCompany
+        ? [
+            {
+              label: 'Sede principal',
+              address: detailCompany.address ?? DEFAULT_MAP_ADDRESS,
+            },
+          ]
+        : [];
 
   const featuredCompanies = featuredSlots
     .map((slot) => {
@@ -390,14 +401,17 @@ export function CompaniesShowcasePage() {
                   </a>
                 )}
 
-                <a
-                  href={`https://maps.google.com/?q=${encodeURIComponent(detailCompany.address ?? DEFAULT_MAP_ADDRESS)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="secondary-link"
-                >
-                  Google Maps
-                </a>
+                {detailLocations.map((location) => (
+                  <a
+                    key={`${detailCompany.id}-${location.label}`}
+                    href={`https://maps.google.com/?q=${encodeURIComponent(location.address)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="secondary-link"
+                  >
+                    {detailLocations.length > 1 ? `Maps ${location.label}` : 'Google Maps'}
+                  </a>
+                ))}
 
                 {detailCompany.phone && (
                   <a href={`tel:${detailCompany.phone.replace(/\s/g, '')}`} className="secondary-link">
@@ -415,14 +429,21 @@ export function CompaniesShowcasePage() {
 
             <section className="map-section">
               <h3>Ubicacion</h3>
-              <p>{detailCompany.address ?? DEFAULT_MAP_ADDRESS}</p>
-              <iframe
-                className="map-frame"
-                title={`Mapa ${detailCompany.name}`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(detailCompany.address ?? DEFAULT_MAP_ADDRESS)}&output=embed`}
-              />
+              <div className="locations-grid">
+                {detailLocations.map((location) => (
+                  <article key={`${detailCompany.id}-map-${location.label}`} className="location-card">
+                    <strong>{location.label}</strong>
+                    <p>{location.address}</p>
+                    <iframe
+                      className="map-frame"
+                      title={`Mapa ${detailCompany.name} ${location.label}`}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(location.address)}&output=embed`}
+                    />
+                  </article>
+                ))}
+              </div>
             </section>
 
             <section className="menu-section">

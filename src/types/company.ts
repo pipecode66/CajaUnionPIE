@@ -10,6 +10,11 @@ export interface Product {
   tags: string[];
 }
 
+export interface CompanyLocation {
+  label: string;
+  address: string;
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -27,6 +32,7 @@ export interface Company {
   whatsapp?: string;
   phone?: string;
   address?: string;
+  locations?: CompanyLocation[];
   website?: string;
   schedule?: string;
   status: ModerationStatus;
@@ -50,6 +56,7 @@ export interface CompanyDraftInput {
   whatsapp?: string;
   phone?: string;
   address?: string;
+  locations?: CompanyLocation[];
   website?: string;
   schedule?: string;
   status: ModerationStatus;
