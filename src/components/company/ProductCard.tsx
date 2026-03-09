@@ -13,7 +13,6 @@ export function ProductCard({ product, companyName, companyWhatsapp, onView }: P
 
   return (
     <article className="product-card">
-      <img src={product.imageUrl} alt={product.name} className="product-image" />
       <div className="product-body">
         <h4>{product.name}</h4>
         <p>{product.shortDesc}</p>

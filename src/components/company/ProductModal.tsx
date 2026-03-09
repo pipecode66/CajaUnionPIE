@@ -17,8 +17,7 @@ export function ProductModal({ company, product, onClose }: ProductModalProps) {
 
   return (
     <Modal isOpen={Boolean(product)} onClose={onClose} title={product.name}>
-      <article className="product-modal-content">
-        <img src={product.imageUrl} alt={product.name} className="product-modal-image" />
+      <article className="product-modal-content product-modal-content-text">
         <div>
           <p>{product.shortDesc}</p>
           {product.sku && <p className="muted-text">SKU: {product.sku}</p>}
