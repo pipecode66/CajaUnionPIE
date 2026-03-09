@@ -251,7 +251,7 @@ export function CompaniesShowcasePage() {
         <header className="showcase-hero">
           <div>
             <p className="eyebrow">Respaldado por Caja Union</p>
-            <h1>Directorio Empresarial Integrado</h1>
+            <h1>Unión Empresarial</h1>
             <p>
               Explora empresas por categoria y ciudad. Cada card abre un popup con su detalle comercial, contacto,
               productos y valoraciones.
